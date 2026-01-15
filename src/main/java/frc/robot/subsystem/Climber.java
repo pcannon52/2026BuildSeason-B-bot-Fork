@@ -4,10 +4,17 @@
 
 package frc.robot.subsystem;
 
+import com.ctre.phoenix6.hardware.TalonFX;
+
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.BotConstants;
 
 public class Climber extends SubsystemBase {
   /** Creates a new Climber. */
+    private final TalonFX m_Climber1 = new TalonFX(BotConstants.Climber.Climber_1_ID);
+    private final TalonFX m_Climber2 = new TalonFX(BotConstants.Climber.Climber_2_ID);
+
+
   public Climber() {}
 
   @Override
