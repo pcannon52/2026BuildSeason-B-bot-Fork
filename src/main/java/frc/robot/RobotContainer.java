@@ -14,8 +14,10 @@ import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.RobotModeTriggers;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
+import frc.robot.HumanControls.DriverPannel;
 import frc.robot.HumanControls.SingleXboxController;
 import frc.robot.subsystem.CommandSwerveDrivetrain;
 
@@ -37,6 +39,10 @@ public class RobotContainer {
 
     public final CommandSwerveDrivetrain drivetrain = TunerConstants.createDrivetrain();
 
+    private boolean isDriverPanelConnected() {
+    return DriverPannel.DriverPanel.isConnected();
+}
+
     public RobotContainer() {
         configureBindings();
     }
@@ -45,12 +51,20 @@ public class RobotContainer {
         // Note that X is defined as forward according to WPILib convention,
         // and Y is defined as to the left according to WPILib convention.
     drivetrain.setDefaultCommand(
-    drivetrain.applyRequest(() ->
-        drive.withVelocityX(-joystick.leftJoyY.getAsDouble() * MaxSpeed)
-             .withVelocityY(joystick.leftJoyX.getAsDouble() * MaxSpeed) // I think you negate this one
-             .withRotationalRate(joystick.rightJoyX.getAsDouble() * MaxAngularRate)
-    )
-);
+    drivetrain.applyRequest(() -> {
+        if (isDriverPanelConnected()) {
+            // Driver Panel controls
+            return drive.withVelocityX(-joystick.leftJoyY.getAsDouble() * MaxSpeed)
+                       .withVelocityY(-joystick.leftJoyX.getAsDouble() * MaxSpeed)
+                       .withRotationalRate(joystick.rightJoyX.getAsDouble() * MaxAngularRate);
+        } else {
+            // Xbox controls (backup)
+            return drive.withVelocityX(SingleXboxController.leftJoyY.getAsDouble() * MaxSpeed)
+                       .withVelocityY(SingleXboxController.leftJoyX.getAsDouble() * MaxSpeed)
+                       .withRotationalRate(SingleXboxController.rightJoyX.getAsDouble() * MaxAngularRate);
+        }
+    })
+    );
 
          
     SingleXboxController.A.whileTrue(drivetrain.applyRequest(() ->
