@@ -26,10 +26,13 @@ public class Intake extends SubsystemBase {
        m_IntakeRun.getConfigurator().apply(config);
   }
 
-      public Command runIntake() {
-        return Commands.run(() -> m_IntakeRun.set(0.35), this);
-    }
-
+     public Command runIntake() {
+    return Commands.runEnd(
+        () -> m_IntakeRun.set(.35),
+        () -> m_IntakeRun.set(0),
+        this
+    );
+}
 
   @Override
   public void periodic() {

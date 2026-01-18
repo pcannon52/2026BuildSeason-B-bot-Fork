@@ -32,10 +32,15 @@ public class ShooterAndTurret extends SubsystemBase {
 
 
   
-      public Command runShooter() {
-        return Commands.run(() -> m_Shooter1.set(0.95), this);
-    }
-
+     public Command runShooter() {
+    // first lambda: what to do while running
+    // second lambda: what to do when the command ends
+    return Commands.runEnd(
+        () -> m_Shooter1.set(0.90),
+        () -> m_Shooter1.set(0),
+        this // the subsystem
+    );
+}
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
