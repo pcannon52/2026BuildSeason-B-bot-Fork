@@ -13,13 +13,18 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.RobotModeTriggers;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
+import frc.robot.BotConstants.Shooter;
 import frc.robot.HumanControls.DriverPannel;
 import frc.robot.HumanControls.SingleXboxController;
 import frc.robot.subsystem.CommandSwerveDrivetrain;
+import frc.robot.subsystem.ShooterAndTurret;
+import frc.robot.subsystem.Intake;
+
 
 public class RobotContainer {
     private double MaxSpeed = TunerConstants.kSpeedAt12Volts.in(MetersPerSecond); // kSpeedAt12Volts desired top speed
@@ -35,9 +40,9 @@ public class RobotContainer {
     private final Telemetry logger = new Telemetry(MaxSpeed);
 
      private final CommandXboxController joystick = new CommandXboxController(0);
-
-
     public final CommandSwerveDrivetrain drivetrain = TunerConstants.createDrivetrain();
+    public final Intake intake = new Intake();
+    public final ShooterAndTurret shooterAndTurret = new ShooterAndTurret();
 
     private boolean isDriverPanelConnected() {
     return DriverPannel.DriverPanel.isConnected();
@@ -59,7 +64,11 @@ public class RobotContainer {
             )
         );
 
-         
+        joystick.a().onTrue(drivetrain.resetGyro());
+        joystick.rightTrigger().whileTrue(new ParallelCommandGroup(intake.runIntake(),
+            shooterAndTurret.runShooter()));
+       
+
         // Idle while the robot is disabled. This ensures the configured
         // neutral mode is applied to the drive motors while disabled.
         final var idle = new SwerveRequest.Idle();

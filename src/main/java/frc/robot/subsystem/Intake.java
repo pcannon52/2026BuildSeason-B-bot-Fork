@@ -4,18 +4,32 @@
 
 package frc.robot.subsystem;
 
+import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.hardware.TalonFX;
 
+import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.BotConstants;
 
 public class Intake extends SubsystemBase {
   /** Creates a new Intake. */
-    private final TalonFX m_IntakePivot = new TalonFX(BotConstants.Intake.pivotID);
-    private final TalonFX m_IntakeRun = new TalonFX(BotConstants.Intake.intakeID);
-    private final TalonFX m_IntakeBeam = new TalonFX(BotConstants.Intake.intakeBeamBreakID);
+    private final TalonFX m_IntakeRun;
+  public Intake() {
+  this.m_IntakeRun = new TalonFX(BotConstants.Intake.intakeID);
+    TalonFXConfiguration config = new TalonFXConfiguration();
+    // Set ramp times (seconds to go from 0 → full output)
+        config.OpenLoopRamps.DutyCycleOpenLoopRampPeriod = 0.5; // 0.5 seconds
+        config.ClosedLoopRamps.DutyCycleClosedLoopRampPeriod = 0.5;
 
-  public Intake() {}
+       m_IntakeRun.getConfigurator().apply(config);
+  }
+
+      public Command runIntake() {
+        return Commands.run(() -> m_IntakeRun.set(0.35), this);
+    }
+
 
   @Override
   public void periodic() {

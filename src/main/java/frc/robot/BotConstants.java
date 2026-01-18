@@ -16,14 +16,13 @@ public class BotConstants {
     
     static{
         riobus = new CANBus("rio");
-        Canivore = new CANBus("cv");
+        // Canivore = new CANBus("cv"); no canivore
     }
 
 //All these values are temporary.
     public static class Intake{
-        public static final int pivotID = 1;
-        public static final int intakeID = 2;
-        public static final int intakeBeamBreakID = 0;
+
+        public static final int intakeID = 13;
 
         static{
             //Tis where the config will go, too lazy to write it rn
@@ -40,9 +39,7 @@ public class BotConstants {
     }
 
     public static class Shooter{
-        public static final int shooterflywheel_1_ID = 4;
-        public static final int shooterflywheel_2_ID = 5;
-
+        public static final int shooterflywheel_1_ID = 14;
         static{
             //Tis where the config will go, too lazy to write it rn
         }

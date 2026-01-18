@@ -4,24 +4,37 @@
 
 package frc.robot.subsystem;
 
+import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.hardware.TalonFX;
 
+import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.BotConstants;
 
 public class ShooterAndTurret extends SubsystemBase {
   /** Creates a new ShooterAndTurret. */
-      private final TalonFX m_Shooter1 = new TalonFX(BotConstants.Shooter.shooterflywheel_1_ID);
-      private final TalonFX m_Shooter2 = new TalonFX(BotConstants.Shooter.shooterflywheel_2_ID);
+      private final TalonFX m_Shooter1;
       private final TalonFX m_Hood = new TalonFX(BotConstants.Hood.Hood_ID);
       private final TalonFX m_Turret = new TalonFX(BotConstants.Turret.Turret_ID);
       private final TalonFX m_TurretBeam = new TalonFX(BotConstants.Turret.Turret_BeamBreakID);
 
 
+  public ShooterAndTurret(){
+     this.m_Shooter1 = new TalonFX(BotConstants.Shooter.shooterflywheel_1_ID);
+         TalonFXConfiguration config = new TalonFXConfiguration();
+
+     config.OpenLoopRamps.DutyCycleOpenLoopRampPeriod = 0.5; // 0.5 seconds
+       config.ClosedLoopRamps.DutyCycleClosedLoopRampPeriod = 0.5;
+
+       m_Shooter1.getConfigurator().apply(config);
+  }
 
 
-
-  public ShooterAndTurret() {}
+  
+      public Command runShooter() {
+        return Commands.run(() -> m_Shooter1.set(0.95), this);
+    }
 
   @Override
   public void periodic() {
